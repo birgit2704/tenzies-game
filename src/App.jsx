@@ -70,6 +70,10 @@ function App() {
   return (
     <main>
       {tenzies && <Confetti />}
+      <div className="rolls">
+        <p>Number of rolls to beat: 100</p>
+        <p>Current rolls: 0</p>
+      </div>
       <h1 className="title">Tenzies</h1>
       <p className="instructions">
         Roll until all dice are the same. Click each die to freeze it at its
@@ -79,6 +83,7 @@ function App() {
       <button className="button" onClick={rollDice}>
         {tenzies ? "New Game" : "Roll"}
       </button>
+      <p className="react">Built with React</p>
     </main>
   );
 }
