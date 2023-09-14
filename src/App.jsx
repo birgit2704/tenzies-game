@@ -7,6 +7,9 @@ import Die from "./components/Die";
 function App() {
   const [dices, setDices] = useState(allNewDice);
   const [tenzies, setTenzies] = useState(false);
+  const [highScore, setHighScore] = useState(25);
+  const [currentRolls, setCurrentRolls] = useState(0);
+  const [loser, setLoser] = useState(false);
 
   const dicesArr = dices.map((dice) => (
     <Die
@@ -19,12 +22,14 @@ function App() {
 
   useEffect(() => {
     const allHeld = dices.every((die) => die.isHeld);
-
     const allEqual = dices.every((die) => die.value === dices[0].value);
 
     if (allHeld && allEqual) {
       setTenzies(true);
-      console.log("you won!");
+    }
+
+    if (currentRolls >= highScore) {
+      setLoser(true);
     }
   }, [dices]);
 
@@ -39,7 +44,15 @@ function App() {
   }
 
   function rollDice() {
-    if (!tenzies) {
+    if (loser) {
+      setDices(allNewDice);
+      setLoser(false);
+      setCurrentRolls(0);
+    } else if (tenzies) {
+      setDices(allNewDice);
+      setTenzies(false);
+      setCurrentRolls(0);
+    } else {
       setDices((prevState) =>
         prevState.map((die) => {
           if (die.isHeld) return die;
@@ -51,9 +64,7 @@ function App() {
             };
         })
       );
-    } else {
-      setDices(allNewDice);
-      setTenzies(false);
+      setCurrentRolls((prev) => prev + 1);
     }
   }
 
@@ -71,17 +82,17 @@ function App() {
     <main>
       {tenzies && <Confetti />}
       <div className="rolls">
-        <p>Number of rolls to beat: 100</p>
-        <p>Current rolls: 0</p>
+        <p>Maximum rolls: {highScore}</p>
+        <p>Current rolls: {currentRolls}</p>
       </div>
-      <h1 className="title">Tenzies</h1>
+      <h1 className="title">{loser ? "Your are over the limit" : "Tenzies"}</h1>
       <p className="instructions">
         Roll until all dice are the same. Click each die to freeze it at its
         current value between rolls.
       </p>
       <div className="die-container">{dicesArr}</div>
       <button className="button" onClick={rollDice}>
-        {tenzies ? "New Game" : "Roll"}
+        {tenzies || loser ? "New Game" : "Roll"}
       </button>
       <p className="react">Built with React</p>
     </main>
